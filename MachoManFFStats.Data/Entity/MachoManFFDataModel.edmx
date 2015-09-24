@@ -1,0 +1,370 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="MachoManFFModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Members">
+          <Key>
+            <PropertyRef Name="MemberID" />
+          </Key>
+          <Property Name="MemberID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MemberName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Standings">
+          <Key>
+            <PropertyRef Name="StandingsID" />
+          </Key>
+          <Property Name="StandingsID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Season" Type="int" Nullable="false" />
+          <Property Name="MemberID" Type="int" Nullable="false" />
+          <Property Name="RegularSeasonRank" Type="int" Nullable="false" />
+          <Property Name="IsChampion" Type="bit" Nullable="false" />
+          <Property Name="ReachedFinals" Type="bit" Nullable="false" />
+          <Property Name="MadePlayoffs" Type="bit" Nullable="false" />
+          <Property Name="ReceivedBye" Type="bit" Nullable="false" />
+          <Property Name="DivisionWinner" Type="bit" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'MachoManFF.dbo.vAllTimeStandings' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vAllTimeStandings">
+          <Key>
+            <PropertyRef Name="MemberId" />
+            <PropertyRef Name="MemberName" />
+          </Key>
+          <Property Name="MemberId" Type="int" Nullable="false" />
+          <Property Name="MemberName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="PointsScored" Type="int" />
+          <Property Name="PointsAgainst" Type="int" />
+          <Property Name="Wins" Type="int" />
+          <Property Name="Losses" Type="int" />
+          <Property Name="WinPercentage" Type="numeric" Precision="25" Scale="13" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'MachoManFF.dbo.vHistoricalMatchups' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vHistoricalMatchups">
+          <Key>
+            <PropertyRef Name="MatchupID" />
+            <PropertyRef Name="Week" />
+            <PropertyRef Name="Year" />
+            <PropertyRef Name="HomeScore" />
+            <PropertyRef Name="AwayScore" />
+          </Key>
+          <Property Name="MatchupID" Type="int" Nullable="false" />
+          <Property Name="Week" Type="int" Nullable="false" />
+          <Property Name="Year" Type="int" Nullable="false" />
+          <Property Name="HomeMemberID" Type="int" />
+          <Property Name="HomeTeam" Type="nvarchar" MaxLength="50" />
+          <Property Name="HomeScore" Type="int" Nullable="false" />
+          <Property Name="AwayMemberID" Type="int" />
+          <Property Name="AwayTeam" Type="nvarchar" MaxLength="50" />
+          <Property Name="AwayScore" Type="int" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'MachoManFF.dbo.vHistoricalStandings' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vHistoricalStandings">
+          <Key>
+            <PropertyRef Name="MemberID" />
+            <PropertyRef Name="Year" />
+            <PropertyRef Name="MemberName" />
+            <PropertyRef Name="MadePlayoffs" />
+            <PropertyRef Name="ReceivedBye" />
+            <PropertyRef Name="DivisionWinner" />
+            <PropertyRef Name="RegularSeasonRank" />
+            <PropertyRef Name="ReachedFinals" />
+            <PropertyRef Name="IsChampion" />
+          </Key>
+          <Property Name="ViewID" Type="bigint" />
+          <Property Name="MemberID" Type="int" Nullable="false" />
+          <Property Name="Year" Type="int" Nullable="false" />
+          <Property Name="MemberName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="PointsScored" Type="int" />
+          <Property Name="PointsAgainst" Type="int" />
+          <Property Name="Wins" Type="int" />
+          <Property Name="Losses" Type="int" />
+          <Property Name="WinPercentage" Type="numeric" Precision="28" Scale="16" />
+          <Property Name="MadePlayoffs" Type="bit" Nullable="false" />
+          <Property Name="ReceivedBye" Type="bit" Nullable="false" />
+          <Property Name="DivisionWinner" Type="bit" Nullable="false" />
+          <Property Name="RegularSeasonRank" Type="int" Nullable="false" />
+          <Property Name="ReachedFinals" Type="bit" Nullable="false" />
+          <Property Name="IsChampion" Type="bit" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Standings_Members">
+          <End Role="Members" Type="Self.Members" Multiplicity="1" />
+          <End Role="Standings" Type="Self.Standings" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Members">
+              <PropertyRef Name="MemberID" />
+            </Principal>
+            <Dependent Role="Standings">
+              <PropertyRef Name="MemberID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="MachoManFFModelStoreContainer">
+          <EntitySet Name="Members" EntityType="Self.Members" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Standings" EntityType="Self.Standings" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="vAllTimeStandings" EntityType="Self.vAllTimeStandings" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vAllTimeStandings].[MemberId] AS [MemberId], 
+    [vAllTimeStandings].[MemberName] AS [MemberName], 
+    [vAllTimeStandings].[PointsScored] AS [PointsScored], 
+    [vAllTimeStandings].[PointsAgainst] AS [PointsAgainst], 
+    [vAllTimeStandings].[Wins] AS [Wins], 
+    [vAllTimeStandings].[Losses] AS [Losses], 
+    [vAllTimeStandings].[WinPercentage] AS [WinPercentage]
+    FROM [dbo].[vAllTimeStandings] AS [vAllTimeStandings]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="vHistoricalMatchups" EntityType="Self.vHistoricalMatchups" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vHistoricalMatchups].[MatchupID] AS [MatchupID], 
+    [vHistoricalMatchups].[Week] AS [Week], 
+    [vHistoricalMatchups].[Year] AS [Year], 
+    [vHistoricalMatchups].[HomeMemberID] AS [HomeMemberID], 
+    [vHistoricalMatchups].[HomeTeam] AS [HomeTeam], 
+    [vHistoricalMatchups].[HomeScore] AS [HomeScore], 
+    [vHistoricalMatchups].[AwayMemberID] AS [AwayMemberID], 
+    [vHistoricalMatchups].[AwayTeam] AS [AwayTeam], 
+    [vHistoricalMatchups].[AwayScore] AS [AwayScore]
+    FROM [dbo].[vHistoricalMatchups] AS [vHistoricalMatchups]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="vHistoricalStandings" EntityType="Self.vHistoricalStandings" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vHistoricalStandings].[ViewID] AS [ViewID], 
+    [vHistoricalStandings].[MemberID] AS [MemberID], 
+    [vHistoricalStandings].[Year] AS [Year], 
+    [vHistoricalStandings].[MemberName] AS [MemberName], 
+    [vHistoricalStandings].[PointsScored] AS [PointsScored], 
+    [vHistoricalStandings].[PointsAgainst] AS [PointsAgainst], 
+    [vHistoricalStandings].[Wins] AS [Wins], 
+    [vHistoricalStandings].[Losses] AS [Losses], 
+    [vHistoricalStandings].[WinPercentage] AS [WinPercentage], 
+    [vHistoricalStandings].[MadePlayoffs] AS [MadePlayoffs], 
+    [vHistoricalStandings].[ReceivedBye] AS [ReceivedBye], 
+    [vHistoricalStandings].[DivisionWinner] AS [DivisionWinner], 
+    [vHistoricalStandings].[RegularSeasonRank] AS [RegularSeasonRank], 
+    [vHistoricalStandings].[ReachedFinals] AS [ReachedFinals], 
+    [vHistoricalStandings].[IsChampion] AS [IsChampion]
+    FROM [dbo].[vHistoricalStandings] AS [vHistoricalStandings]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK_Standings_Members" Association="Self.FK_Standings_Members">
+            <End Role="Members" EntitySet="Members" />
+            <End Role="Standings" EntitySet="Standings" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="MachoManFFModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="vHistoricalStanding">
+          <Key>
+            <PropertyRef Name="MemberID" />
+            <PropertyRef Name="Year" />
+            <PropertyRef Name="MemberName" />
+            <PropertyRef Name="MadePlayoffs" />
+            <PropertyRef Name="ReceivedBye" />
+            <PropertyRef Name="DivisionWinner" />
+            <PropertyRef Name="RegularSeasonRank" />
+            <PropertyRef Name="ReachedFinals" />
+            <PropertyRef Name="IsChampion" />
+          </Key>
+          <Property Name="ViewID" Type="Int64" />
+          <Property Name="MemberID" Type="Int32" Nullable="false" />
+          <Property Name="Year" Type="Int32" Nullable="false" />
+          <Property Name="MemberName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="PointsScored" Type="Int32" />
+          <Property Name="PointsAgainst" Type="Int32" />
+          <Property Name="Wins" Type="Int32" />
+          <Property Name="Losses" Type="Int32" />
+          <Property Name="WinPercentage" Type="Decimal" Precision="28" Scale="16" />
+          <Property Name="MadePlayoffs" Type="Boolean" Nullable="false" />
+          <Property Name="ReceivedBye" Type="Boolean" Nullable="false" />
+          <Property Name="DivisionWinner" Type="Boolean" Nullable="false" />
+          <Property Name="RegularSeasonRank" Type="Int32" Nullable="false" />
+          <Property Name="ReachedFinals" Type="Boolean" Nullable="false" />
+          <Property Name="IsChampion" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityContainer Name="MachoManFFEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="vHistoricalStandings" EntityType="Self.vHistoricalStanding" />
+          <EntitySet Name="vAllTimeStandings" EntityType="MachoManFFModel.vAllTimeStanding" />
+          <EntitySet Name="Standings" EntityType="MachoManFFModel.Standing" />
+          <EntitySet Name="Members" EntityType="MachoManFFModel.Member" />
+          <AssociationSet Name="FK_Standings_Members" Association="MachoManFFModel.FK_Standings_Members">
+            <End Role="Member" EntitySet="Members" />
+            <End Role="Standing" EntitySet="Standings" />
+          </AssociationSet>
+          <EntitySet Name="vHistoricalMatchups" EntityType="MachoManFFModel.vHistoricalMatchup" />
+        </EntityContainer>
+        <EntityType Name="vAllTimeStanding">
+          <Key>
+            <PropertyRef Name="MemberId" />
+            <PropertyRef Name="MemberName" />
+          </Key>
+          <Property Name="MemberId" Type="Int32" Nullable="false" />
+          <Property Name="MemberName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PointsScored" Type="Int32" />
+          <Property Name="PointsAgainst" Type="Int32" />
+          <Property Name="Wins" Type="Int32" />
+          <Property Name="Losses" Type="Int32" />
+          <Property Name="WinPercentage" Type="Decimal" Precision="25" Scale="13" />
+        </EntityType>
+        <EntityType Name="Standing">
+          <Key>
+            <PropertyRef Name="StandingsID" />
+          </Key>
+          <Property Name="StandingsID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Season" Type="Int32" Nullable="false" />
+          <Property Name="MemberID" Type="Int32" Nullable="false" />
+          <Property Name="RegularSeasonRank" Type="Int32" Nullable="false" />
+          <Property Name="IsChampion" Type="Boolean" Nullable="false" />
+          <Property Name="ReachedFinals" Type="Boolean" Nullable="false" />
+          <Property Name="MadePlayoffs" Type="Boolean" Nullable="false" />
+          <Property Name="ReceivedBye" Type="Boolean" Nullable="false" />
+          <Property Name="DivisionWinner" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Member" Relationship="MachoManFFModel.FK_Standings_Members" FromRole="Standing" ToRole="Member" />
+        </EntityType>
+        <EntityType Name="Member">
+          <Key>
+            <PropertyRef Name="MemberID" />
+          </Key>
+          <Property Name="MemberID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MemberName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Standings" Relationship="MachoManFFModel.FK_Standings_Members" FromRole="Member" ToRole="Standing" />
+        </EntityType>
+        <Association Name="FK_Standings_Members">
+          <End Type="MachoManFFModel.Member" Role="Member" Multiplicity="1" />
+          <End Type="MachoManFFModel.Standing" Role="Standing" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Member">
+              <PropertyRef Name="MemberID" />
+            </Principal>
+            <Dependent Role="Standing">
+              <PropertyRef Name="MemberID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="vHistoricalMatchup">
+          <Key>
+            <PropertyRef Name="MatchupID" />
+            <PropertyRef Name="Week" />
+            <PropertyRef Name="Year" />
+            <PropertyRef Name="HomeScore" />
+            <PropertyRef Name="AwayScore" />
+          </Key>
+          <Property Name="MatchupID" Type="Int32" Nullable="false" />
+          <Property Name="Week" Type="Int32" Nullable="false" />
+          <Property Name="Year" Type="Int32" Nullable="false" />
+          <Property Name="HomeMemberID" Type="Int32" />
+          <Property Name="HomeTeam" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="HomeScore" Type="Int32" Nullable="false" />
+          <Property Name="AwayMemberID" Type="Int32" />
+          <Property Name="AwayTeam" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="AwayScore" Type="Int32" Nullable="false" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="MachoManFFModelStoreContainer" CdmEntityContainer="MachoManFFEntities">
+          <EntitySetMapping Name="vHistoricalStandings">
+            <EntityTypeMapping TypeName="MachoManFFModel.vHistoricalStanding">
+              <MappingFragment StoreEntitySet="vHistoricalStandings">
+                <ScalarProperty Name="IsChampion" ColumnName="IsChampion" />
+                <ScalarProperty Name="ReachedFinals" ColumnName="ReachedFinals" />
+                <ScalarProperty Name="RegularSeasonRank" ColumnName="RegularSeasonRank" />
+                <ScalarProperty Name="DivisionWinner" ColumnName="DivisionWinner" />
+                <ScalarProperty Name="ReceivedBye" ColumnName="ReceivedBye" />
+                <ScalarProperty Name="MadePlayoffs" ColumnName="MadePlayoffs" />
+                <ScalarProperty Name="ViewID" ColumnName="ViewID" />
+                <ScalarProperty Name="MemberID" ColumnName="MemberID" />
+                <ScalarProperty Name="Year" ColumnName="Year" />
+                <ScalarProperty Name="MemberName" ColumnName="MemberName" />
+                <ScalarProperty Name="PointsScored" ColumnName="PointsScored" />
+                <ScalarProperty Name="PointsAgainst" ColumnName="PointsAgainst" />
+                <ScalarProperty Name="Wins" ColumnName="Wins" />
+                <ScalarProperty Name="Losses" ColumnName="Losses" />
+                <ScalarProperty Name="WinPercentage" ColumnName="WinPercentage" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vAllTimeStandings">
+            <EntityTypeMapping TypeName="MachoManFFModel.vAllTimeStanding">
+              <MappingFragment StoreEntitySet="vAllTimeStandings">
+                <ScalarProperty Name="WinPercentage" ColumnName="WinPercentage" />
+                <ScalarProperty Name="Losses" ColumnName="Losses" />
+                <ScalarProperty Name="Wins" ColumnName="Wins" />
+                <ScalarProperty Name="PointsAgainst" ColumnName="PointsAgainst" />
+                <ScalarProperty Name="PointsScored" ColumnName="PointsScored" />
+                <ScalarProperty Name="MemberName" ColumnName="MemberName" />
+                <ScalarProperty Name="MemberId" ColumnName="MemberId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Standings">
+            <EntityTypeMapping TypeName="MachoManFFModel.Standing">
+              <MappingFragment StoreEntitySet="Standings">
+                <ScalarProperty Name="DivisionWinner" ColumnName="DivisionWinner" />
+                <ScalarProperty Name="ReceivedBye" ColumnName="ReceivedBye" />
+                <ScalarProperty Name="MadePlayoffs" ColumnName="MadePlayoffs" />
+                <ScalarProperty Name="ReachedFinals" ColumnName="ReachedFinals" />
+                <ScalarProperty Name="IsChampion" ColumnName="IsChampion" />
+                <ScalarProperty Name="RegularSeasonRank" ColumnName="RegularSeasonRank" />
+                <ScalarProperty Name="MemberID" ColumnName="MemberID" />
+                <ScalarProperty Name="Season" ColumnName="Season" />
+                <ScalarProperty Name="StandingsID" ColumnName="StandingsID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Members">
+            <EntityTypeMapping TypeName="MachoManFFModel.Member">
+              <MappingFragment StoreEntitySet="Members">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="MemberName" ColumnName="MemberName" />
+                <ScalarProperty Name="MemberID" ColumnName="MemberID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vHistoricalMatchups">
+            <EntityTypeMapping TypeName="MachoManFFModel.vHistoricalMatchup">
+              <MappingFragment StoreEntitySet="vHistoricalMatchups">
+                <ScalarProperty Name="AwayScore" ColumnName="AwayScore" />
+                <ScalarProperty Name="AwayTeam" ColumnName="AwayTeam" />
+                <ScalarProperty Name="AwayMemberID" ColumnName="AwayMemberID" />
+                <ScalarProperty Name="HomeScore" ColumnName="HomeScore" />
+                <ScalarProperty Name="HomeTeam" ColumnName="HomeTeam" />
+                <ScalarProperty Name="HomeMemberID" ColumnName="HomeMemberID" />
+                <ScalarProperty Name="Year" ColumnName="Year" />
+                <ScalarProperty Name="Week" ColumnName="Week" />
+                <ScalarProperty Name="MatchupID" ColumnName="MatchupID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
