@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
 using MachoManFFStats.BLL;
 using MachoManFFStats.BLL.Models;
@@ -22,29 +23,52 @@ namespace MachoManFFStats.WebApi.Controllers
         //all matchups
         [Route("")]
         [HttpGet]
-        public IEnumerable<Matchup> GetAllMatchups()
+        public async Task<IEnumerable<Matchup>> GetAllMatchups()
         {
-            var matchups = _service.GetAllMatchups();
+            var matchups = await _service.GetAllMatchups();
 
             return matchups;
         }
         //matchups for a given year
         [Route("{year:int}")]
-        public IEnumerable<Matchup> GetMatchups_ForYear(int year)
+        public async Task<IHttpActionResult> GetMatchups_ForYear(int year)
         {
-            var matchups = _service.GetMatchupsForYear(year);
+            var matchups = await _service.GetMatchupsForYear(year);
 
-            return matchups;
+            if (!matchups.Any())
+            {
+                return NotFound();
+            }
+
+            return Ok(matchups);
         }
 
         //matchups for a given week
         [Route("{year:int}/{week:int}")]
-        public IEnumerable<Matchup> GetMatchups_ForWeek(int year, int week)
+        public async Task<IHttpActionResult> GetMatchups_ForWeek(int year, int week)
         {
-            var matchups = _service.GetMatchupsForWeek(year, week);
+            var matchups = await _service.GetMatchupsForWeek(year, week);
 
-            return matchups;
+            if (!matchups.Any())
+            {
+                return NotFound();
+            }
+
+            return Ok(matchups);
         }
-        
+
+        [Route("{year:int}/team/{teamId:int}")]
+        [HttpGet]
+        public async Task<IHttpActionResult> GetMatchups_ForYear_ForTeam(int year, int teamId)
+        {
+            var matchups = await _service.GetMatchupsForYearForTeam(year, teamId);
+
+            if (!matchups.Any())
+            {
+                return NotFound();
+            }
+
+            return Ok(matchups);
+        }
     }
 }

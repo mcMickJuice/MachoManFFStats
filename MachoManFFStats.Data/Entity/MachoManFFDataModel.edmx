@@ -5,6 +5,16 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="MachoManFFModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="FFTeams">
+          <Key>
+            <PropertyRef Name="FFTeamID" />
+          </Key>
+          <Property Name="FFTeamID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Team" Type="nvarchar" MaxLength="50" />
+          <Property Name="ESPNFFTeamID" Type="int" Nullable="false" />
+          <Property Name="MemberID" Type="int" />
+          <Property Name="Year" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="Members">
           <Key>
             <PropertyRef Name="MemberID" />
@@ -92,6 +102,36 @@ warning 6002: The table/view 'MachoManFF.dbo.vHistoricalStandings' does not have
           <Property Name="ReachedFinals" Type="bit" Nullable="false" />
           <Property Name="IsChampion" Type="bit" Nullable="false" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'MachoManFF.dbo.vRecordVsOpponent' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vRecordVsOpponent">
+          <Key>
+            <PropertyRef Name="MemberID" />
+            <PropertyRef Name="MemberName" />
+            <PropertyRef Name="OppMemberID" />
+            <PropertyRef Name="OppName" />
+            <PropertyRef Name="Wins" />
+            <PropertyRef Name="Losses" />
+          </Key>
+          <Property Name="MemberID" Type="int" Nullable="false" />
+          <Property Name="MemberName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="OppMemberID" Type="int" Nullable="false" />
+          <Property Name="OppName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Wins" Type="int" Nullable="false" />
+          <Property Name="Losses" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_FFTeams_Members">
+          <End Role="Members" Type="Self.Members" Multiplicity="0..1" />
+          <End Role="FFTeams" Type="Self.FFTeams" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Members">
+              <PropertyRef Name="MemberID" />
+            </Principal>
+            <Dependent Role="FFTeams">
+              <PropertyRef Name="MemberID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Standings_Members">
           <End Role="Members" Type="Self.Members" Multiplicity="1" />
           <End Role="Standings" Type="Self.Standings" Multiplicity="*" />
@@ -105,6 +145,7 @@ warning 6002: The table/view 'MachoManFF.dbo.vHistoricalStandings' does not have
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="MachoManFFModelStoreContainer">
+          <EntitySet Name="FFTeams" EntityType="Self.FFTeams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Members" EntityType="Self.Members" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Standings" EntityType="Self.Standings" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="vAllTimeStandings" EntityType="Self.vAllTimeStandings" store:Type="Views" store:Schema="dbo">
@@ -150,6 +191,20 @@ warning 6002: The table/view 'MachoManFF.dbo.vHistoricalStandings' does not have
     [vHistoricalStandings].[IsChampion] AS [IsChampion]
     FROM [dbo].[vHistoricalStandings] AS [vHistoricalStandings]</DefiningQuery>
           </EntitySet>
+          <EntitySet Name="vRecordVsOpponent" EntityType="Self.vRecordVsOpponent" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vRecordVsOpponent].[MemberID] AS [MemberID], 
+    [vRecordVsOpponent].[MemberName] AS [MemberName], 
+    [vRecordVsOpponent].[OppMemberID] AS [OppMemberID], 
+    [vRecordVsOpponent].[OppName] AS [OppName], 
+    [vRecordVsOpponent].[Wins] AS [Wins], 
+    [vRecordVsOpponent].[Losses] AS [Losses]
+    FROM [dbo].[vRecordVsOpponent] AS [vRecordVsOpponent]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK_FFTeams_Members" Association="Self.FK_FFTeams_Members">
+            <End Role="Members" EntitySet="Members" />
+            <End Role="FFTeams" EntitySet="FFTeams" />
+          </AssociationSet>
           <AssociationSet Name="FK_Standings_Members" Association="Self.FK_Standings_Members">
             <End Role="Members" EntitySet="Members" />
             <End Role="Standings" EntitySet="Standings" />
@@ -197,6 +252,12 @@ warning 6002: The table/view 'MachoManFF.dbo.vHistoricalStandings' does not have
             <End Role="Standing" EntitySet="Standings" />
           </AssociationSet>
           <EntitySet Name="vHistoricalMatchups" EntityType="MachoManFFModel.vHistoricalMatchup" />
+          <EntitySet Name="vRecordVsOpponents" EntityType="MachoManFFModel.vRecordVsOpponent" />
+          <EntitySet Name="FFTeams" EntityType="MachoManFFModel.FFTeam" />
+          <AssociationSet Name="FK_FFTeams_Members" Association="MachoManFFModel.FK_FFTeams_Members">
+            <End Role="Member" EntitySet="Members" />
+            <End Role="FFTeam" EntitySet="FFTeams" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="vAllTimeStanding">
           <Key>
@@ -234,6 +295,7 @@ warning 6002: The table/view 'MachoManFF.dbo.vHistoricalStandings' does not have
           <Property Name="MemberName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Standings" Relationship="MachoManFFModel.FK_Standings_Members" FromRole="Member" ToRole="Standing" />
+          <NavigationProperty Name="FFTeams" Relationship="MachoManFFModel.FK_FFTeams_Members" FromRole="Member" ToRole="FFTeam" />
         </EntityType>
         <Association Name="FK_Standings_Members">
           <End Type="MachoManFFModel.Member" Role="Member" Multiplicity="1" />
@@ -265,6 +327,45 @@ warning 6002: The table/view 'MachoManFF.dbo.vHistoricalStandings' does not have
           <Property Name="AwayTeam" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="AwayScore" Type="Int32" Nullable="false" />
         </EntityType>
+        <EntityType Name="vRecordVsOpponent">
+          <Key>
+            <PropertyRef Name="MemberID" />
+            <PropertyRef Name="MemberName" />
+            <PropertyRef Name="OppMemberID" />
+            <PropertyRef Name="OppName" />
+            <PropertyRef Name="Wins" />
+            <PropertyRef Name="Losses" />
+          </Key>
+          <Property Name="MemberID" Type="Int32" Nullable="false" />
+          <Property Name="MemberName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="OppMemberID" Type="Int32" Nullable="false" />
+          <Property Name="OppName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Wins" Type="Int32" Nullable="false" />
+          <Property Name="Losses" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="FFTeam">
+          <Key>
+            <PropertyRef Name="FFTeamID" />
+          </Key>
+          <Property Name="FFTeamID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Team" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ESPNFFTeamID" Type="Int32" Nullable="false" />
+          <Property Name="MemberID" Type="Int32" />
+          <Property Name="Year" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Member" Relationship="MachoManFFModel.FK_FFTeams_Members" FromRole="FFTeam" ToRole="Member" />
+        </EntityType>
+        <Association Name="FK_FFTeams_Members">
+          <End Type="MachoManFFModel.Member" Role="Member" Multiplicity="0..1" />
+          <End Type="MachoManFFModel.FFTeam" Role="FFTeam" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Member">
+              <PropertyRef Name="MemberID" />
+            </Principal>
+            <Dependent Role="FFTeam">
+              <PropertyRef Name="MemberID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -341,6 +442,29 @@ warning 6002: The table/view 'MachoManFF.dbo.vHistoricalStandings' does not have
                 <ScalarProperty Name="Year" ColumnName="Year" />
                 <ScalarProperty Name="Week" ColumnName="Week" />
                 <ScalarProperty Name="MatchupID" ColumnName="MatchupID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vRecordVsOpponents">
+            <EntityTypeMapping TypeName="MachoManFFModel.vRecordVsOpponent">
+              <MappingFragment StoreEntitySet="vRecordVsOpponent">
+                <ScalarProperty Name="Losses" ColumnName="Losses" />
+                <ScalarProperty Name="Wins" ColumnName="Wins" />
+                <ScalarProperty Name="OppName" ColumnName="OppName" />
+                <ScalarProperty Name="OppMemberID" ColumnName="OppMemberID" />
+                <ScalarProperty Name="MemberName" ColumnName="MemberName" />
+                <ScalarProperty Name="MemberID" ColumnName="MemberID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FFTeams">
+            <EntityTypeMapping TypeName="MachoManFFModel.FFTeam">
+              <MappingFragment StoreEntitySet="FFTeams">
+                <ScalarProperty Name="Year" ColumnName="Year" />
+                <ScalarProperty Name="MemberID" ColumnName="MemberID" />
+                <ScalarProperty Name="ESPNFFTeamID" ColumnName="ESPNFFTeamID" />
+                <ScalarProperty Name="Team" ColumnName="Team" />
+                <ScalarProperty Name="FFTeamID" ColumnName="FFTeamID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

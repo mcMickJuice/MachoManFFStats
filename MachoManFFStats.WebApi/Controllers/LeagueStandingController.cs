@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Http;
 using MachoManFFStats.BLL;
 using MachoManFFStats.BLL.Models;
@@ -18,26 +20,32 @@ namespace MachoManFFStats.WebApi.Controllers
 
         [Route("")]
         [HttpGet]
-        public IEnumerable<TeamStanding> GetHistoricalStandings()
+        public async Task<IEnumerable<TeamStanding>> GetHistoricalStandings()
         {
-            var standings = _standingService.GetAllTimeStandings();
+            var standings = await _standingService.GetAllTimeStandings();
 
             return standings;
         }
 
         [Route("{year:int}")]
         [HttpGet]
-        public IEnumerable<TeamStanding_AnnualFinalist> GetStandingsForYear(int year)
+        public async Task<IHttpActionResult> GetStandingsForYear(int year)
         {
-            var standings = _standingService.GetStandings_ForYear(year);
-            return standings;
+            var standings = await _standingService.GetStandings_ForYear(year);
+
+            if (!standings.Any())
+            {
+                return NotFound();
+            }
+
+            return Ok(standings);
         }
 
         [Route("grouped")]
         [HttpGet]
-        public IEnumerable<AnnualLeagueStanding> GetGroupedStandings()
+        public async Task<IEnumerable<AnnualLeagueStanding>> GetGroupedStandings()
         {
-            var groupedStandings = _standingService.GetGroupedStandings_ByYear();
+            var groupedStandings = await _standingService.GetGroupedStandings_ByYear();
 
             return groupedStandings;
         }
@@ -52,9 +60,9 @@ namespace MachoManFFStats.WebApi.Controllers
 
         [Route("finalists/alltime")]
         [HttpGet]
-        public IEnumerable<AllTimeFinalistStanding> GetLeagueFinalistsAllTime()
+        public async Task<IEnumerable<AllTimeFinalistStanding>> GetLeagueFinalistsAllTime()
         {
-            var standings = _standingService.GetLeagueFinalists_AllTime();
+            var standings = await _standingService.GetLeagueFinalists_AllTime();
             return standings;
         }
     }

@@ -11,6 +11,9 @@
         <EntityTypeShape EntityType="MachoManFFModel.Member" Width="1.5" PointX="2.125" PointY="6.375" />
         <AssociationConnector Association="MachoManFFModel.FK_Standings_Members" />
         <EntityTypeShape EntityType="MachoManFFModel.vHistoricalMatchup" Width="1.5" PointX="6.375" PointY="0.75" />
+        <EntityTypeShape EntityType="MachoManFFModel.vRecordVsOpponent" Width="1.5" PointX="6.375" PointY="4.75" />
+        <EntityTypeShape EntityType="MachoManFFModel.FFTeam" Width="1.5" PointX="5.25" PointY="8.875" />
+        <AssociationConnector Association="MachoManFFModel.FK_FFTeams_Members" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

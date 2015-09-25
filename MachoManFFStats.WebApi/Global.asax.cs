@@ -40,6 +40,7 @@ namespace MachoManFFStats.WebApi
 
             builder.RegisterType<StandingsDbService>().As<IStandingsService>();
             builder.RegisterType<MatchupsDbService>().As<IMatchupsService>();
+            builder.RegisterType<TeamsDbService>().As<ITeamsService>();
 
             //Configure JsonSerializer to camelCase Data
             var httpConfiguration = GlobalConfiguration.Configuration;

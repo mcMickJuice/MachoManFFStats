@@ -30,5 +30,7 @@ namespace MachoManFFStats.Data.Entity
         public virtual DbSet<Standing> Standings { get; set; }
         public virtual DbSet<Member> Members { get; set; }
         public virtual DbSet<vHistoricalMatchup> vHistoricalMatchups { get; set; }
+        public virtual DbSet<vRecordVsOpponent> vRecordVsOpponents { get; set; }
+        public virtual DbSet<FFTeam> FFTeams { get; set; }
     }
 }

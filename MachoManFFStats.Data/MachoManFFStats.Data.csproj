@@ -53,6 +53,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entity\FFTeam.cs">
+      <DependentUpon>MachoManFFDataModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Entity\MachoManFFEntities.cs" />
     <Compile Include="Entity\MachoManFFDataModel.Context.cs">
       <AutoGen>True</AutoGen>
@@ -84,9 +87,13 @@
     <Compile Include="Entity\vHistoricalStanding.cs">
       <DependentUpon>MachoManFFDataModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Entity\vRecordVsOpponent.cs">
+      <DependentUpon>MachoManFFDataModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceImplementation\MatchupsDbService.cs" />
     <Compile Include="ServiceImplementation\StandingsDbService.cs" />
+    <Compile Include="ServiceImplementation\TeamsDbService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

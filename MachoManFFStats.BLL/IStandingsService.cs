@@ -9,10 +9,10 @@ namespace MachoManFFStats.BLL
 {
     public interface IStandingsService
     {
-        IEnumerable<TeamStanding> GetAllTimeStandings();
-        IEnumerable<TeamStanding_AnnualFinalist> GetStandings_ForYear(int year);
-        IEnumerable<AnnualLeagueStanding> GetGroupedStandings_ByYear();
-        IEnumerable<AllTimeFinalistStanding> GetLeagueFinalists_AllTime();
+        Task<IEnumerable<TeamStanding>> GetAllTimeStandings();
+        Task<IEnumerable<TeamStanding_AnnualFinalist>> GetStandings_ForYear(int year);
+        Task<IEnumerable<AnnualLeagueStanding>> GetGroupedStandings_ByYear();
+        Task<IEnumerable<AllTimeFinalistStanding>> GetLeagueFinalists_AllTime();
         void GetGroupedLeagueFinalists_ByYear();
 //        void GetLeagueFinalists_ForYear(int year);
     }

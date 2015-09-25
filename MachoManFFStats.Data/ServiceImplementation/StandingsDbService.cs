@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,9 +30,9 @@ namespace MachoManFFStats.Data.ServiceImplementation
             _context = context;
         }
 
-        public IEnumerable<TeamStanding> GetAllTimeStandings()
+        public async Task<IEnumerable<TeamStanding>> GetAllTimeStandings()
         {
-            var standings = _context.vAllTimeStandings.ToList();
+            var standings = await _context.vAllTimeStandings.ToListAsync();
 
             var mapped = standings.Select(s => new TeamStanding
             {
@@ -47,11 +48,11 @@ namespace MachoManFFStats.Data.ServiceImplementation
             return mapped;
         }
 
-        public IEnumerable<TeamStanding_AnnualFinalist> GetStandings_ForYear(int year)
+        public async Task<IEnumerable<TeamStanding_AnnualFinalist>> GetStandings_ForYear(int year)
         {
-            var mappedStandings = _context.vHistoricalStandings
+            var mappedStandings = (await _context.vHistoricalStandings
                 .Where(s => s.Year == year)
-                .ToList()
+                .ToListAsync())
                 .Select(s =>
                 {
                     var standing = new TeamStanding_AnnualFinalist
@@ -76,11 +77,11 @@ namespace MachoManFFStats.Data.ServiceImplementation
             return mappedStandings;
         }
 
-        public IEnumerable<AnnualLeagueStanding> GetGroupedStandings_ByYear()
+        public async Task<IEnumerable<AnnualLeagueStanding>> GetGroupedStandings_ByYear()
         {
-            var mappedStandings = _context.vHistoricalStandings
+            var mappedStandings = (await _context.vHistoricalStandings
                 .GroupBy(s => s.Year)
-                .ToList()
+                .ToListAsync())
                 .Select(g => new AnnualLeagueStanding
                 {
                     Year = g.Key,
@@ -90,9 +91,9 @@ namespace MachoManFFStats.Data.ServiceImplementation
             return mappedStandings;
         }
 
-        public IEnumerable<AllTimeFinalistStanding> GetLeagueFinalists_AllTime()
+        public async Task<IEnumerable<AllTimeFinalistStanding>> GetLeagueFinalists_AllTime()
         {
-            var standings = _context.Standings.GroupBy(s => new {s.Member.MemberName, s.MemberID})
+            var standings = await _context.Standings.GroupBy(s => new {s.Member.MemberName, s.MemberID})
                 .Select(g => new AllTimeFinalistStanding
                 {
                     MemberId = g.Key.MemberID,
@@ -104,7 +105,7 @@ namespace MachoManFFStats.Data.ServiceImplementation
                     PlayoffsAppearances = g.Count(s => s.MadePlayoffs),
                     NumberOfSeasons = g.Count()
                 })
-                .ToList();
+                .ToListAsync();
 
             return standings;
         }

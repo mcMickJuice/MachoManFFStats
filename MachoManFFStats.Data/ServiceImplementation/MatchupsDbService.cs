@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using MachoManFFStats.BLL;
 using MachoManFFStats.BLL.Models;
 using MachoManFFStats.Data.Entity;
@@ -44,28 +46,58 @@ namespace MachoManFFStats.Data.ServiceImplementation
             _context = context;
         }
 
-        public IEnumerable<Matchup> GetAllMatchups()
+        public async Task<IEnumerable<Matchup>> GetAllMatchups()
         {
-            var matchups = getMatchupsByPredicate();
+            var matchups = await getMatchupsByPredicateAsync();
 
             return matchups;
         }
 
-        public IEnumerable<Matchup> GetMatchupsForYear(int year)
+        public async Task<IEnumerable<Matchup>> GetMatchupsForYear(int year)
         {
-            var matchups = getMatchupsByPredicate(m => m.Year == year);
+            var matchups = await getMatchupsByPredicateAsync(m => m.Year == year);
 
             return matchups;
         }
 
-        public IEnumerable<Matchup> GetMatchupsForWeek(int year, int week)
+        public async Task<IEnumerable<Matchup>> GetMatchupsForWeek(int year, int week)
         {
-            var matchups = getMatchupsByPredicate(m => m.Year == year && m.Week == week);
+            var matchups = await getMatchupsByPredicateAsync(m => m.Year == year && m.Week == week);
 
             return matchups;
         }
 
-        private IEnumerable<Matchup> getMatchupsByPredicate(Expression<Func<vHistoricalMatchup, bool>> predicate = null)
+        public async Task<IEnumerable<TeamSpecificMatchup>> GetMatchupsForYearForTeam(int year, int teamId)
+        {
+            var dbMatchups = await _context.vHistoricalMatchups
+                .Where(s => s.Year == year && (s.AwayMemberID == teamId || s.HomeMemberID == teamId))
+                .OrderBy(s => s.Week)
+                .ToListAsync();
+
+            var matchups = dbMatchups.Select(db =>
+            {
+                var isHomeTeam = db.HomeMemberID == teamId;
+                var isTie = db.AwayScore == db.HomeScore;
+                var m = new TeamSpecificMatchup
+                {
+                    MatchupId = db.MatchupID,
+                    IsHomeTeam = isHomeTeam,
+                    IsTie = isTie,
+                    IsWinningTeam = (db.HomeScore > db.AwayScore ? isHomeTeam : !isHomeTeam) || isTie,
+                    OpponentScore = isHomeTeam ? db.AwayScore : db.HomeScore,
+                    OpponentTeam = isHomeTeam ? db.AwayTeam : db.HomeTeam,
+                    OpponentTeamId = (isHomeTeam? db.AwayMemberID : db.HomeMemberID).Value,
+                    TeamScore = isHomeTeam ? db.HomeScore : db.AwayScore,
+                    Week = db.Week
+                };
+
+                return m;
+            });
+
+            return matchups;
+        }
+
+        private async Task<IEnumerable<Matchup>> getMatchupsByPredicateAsync(Expression<Func<vHistoricalMatchup, bool>> predicate = null)
         {
             var query = _context.vHistoricalMatchups.AsQueryable();
 
@@ -74,7 +106,7 @@ namespace MachoManFFStats.Data.ServiceImplementation
                 query = query.Where(predicate);
             }
 
-            var result = query.ToList().Select(_mapper);
+            var result = (await query.ToListAsync()).Select(_mapper);
 
             return result;
         }

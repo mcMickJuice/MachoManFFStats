@@ -12,19 +12,14 @@ namespace MachoManFFStats.Data.Entity
     using System;
     using System.Collections.Generic;
     
-    public partial class Member
+    public partial class FFTeam
     {
-        public Member()
-        {
-            this.Standings = new HashSet<Standing>();
-            this.FFTeams = new HashSet<FFTeam>();
-        }
+        public int FFTeamID { get; set; }
+        public string Team { get; set; }
+        public int ESPNFFTeamID { get; set; }
+        public Nullable<int> MemberID { get; set; }
+        public int Year { get; set; }
     
-        public int MemberID { get; set; }
-        public string MemberName { get; set; }
-        public bool IsActive { get; set; }
-    
-        public virtual ICollection<Standing> Standings { get; set; }
-        public virtual ICollection<FFTeam> FFTeams { get; set; }
+        public virtual Member Member { get; set; }
     }
 }

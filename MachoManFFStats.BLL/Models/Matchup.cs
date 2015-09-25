@@ -21,4 +21,17 @@ namespace MachoManFFStats.BLL.Models
         public int Score { get; set; }
         public bool IsWinningTeam { get; set; }
     }
+
+    public class TeamSpecificMatchup
+    {
+        public int MatchupId { get; set; }
+        public int Week { get; set; }
+        public bool IsTie { get; set; }
+        public bool IsHomeTeam { get; set; }
+        public int TeamScore { get; set; }
+        public int OpponentScore { get; set; }
+        public string OpponentTeam { get; set; }
+        public int OpponentTeamId { get; set; }
+        public bool IsWinningTeam { get; set; }
+    }
 }

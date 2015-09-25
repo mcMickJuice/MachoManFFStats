@@ -9,8 +9,9 @@ namespace MachoManFFStats.BLL
 {
     public interface IMatchupsService
     {
-        IEnumerable<Matchup> GetAllMatchups();
-        IEnumerable<Matchup> GetMatchupsForYear(int year);
-        IEnumerable<Matchup> GetMatchupsForWeek(int year, int week);
+        Task<IEnumerable<Matchup>> GetAllMatchups();
+        Task<IEnumerable<Matchup>> GetMatchupsForYear(int year);
+        Task<IEnumerable<Matchup>> GetMatchupsForWeek(int year, int week);
+        Task<IEnumerable<TeamSpecificMatchup>> GetMatchupsForYearForTeam(int year, int teamId);
     }
 }

@@ -41,9 +41,11 @@
   <ItemGroup>
     <Compile Include="IMatchupsService.cs" />
     <Compile Include="IStandingsService.cs" />
+    <Compile Include="ITeamsService.cs" />
     <Compile Include="Models\AnnualLeagueStanding.cs" />
     <Compile Include="Models\AllTimeFinalistStanding.cs" />
     <Compile Include="Models\Matchup.cs" />
+    <Compile Include="Models\TeamProfile.cs" />
     <Compile Include="Models\TeamStanding.cs" />
     <Compile Include="Models\TeamStanding_AnnualFinalist.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
